@@ -328,6 +328,25 @@ class List {
 
         console.log(output)
     }
+
+    /**
+     * Function-generator to make linked list itaratable with for...of
+     */
+    *values(){
+        let current = this.head;
+
+        while (current) {
+            yield current.value;
+            current = current.next;
+        }
+    }
+
+    /**
+     * Creating itarator for linked lsit to make it itaratable with for...of
+     */
+    [Symbol.iterator]() {
+        return this.values();
+    } 
 }
 
 module.exports = List
