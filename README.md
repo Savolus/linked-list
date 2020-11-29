@@ -67,4 +67,4 @@ Output of following code will be:
 
 ## Bugs 🐛
 
-If You found some kind of bugs then just tell it in the [issues](https://github.com/Savolus/data-structures/issues)
+If You found some kind of bugs then just tell it in the [issues](https://github.com/Savolus/linked-list/issues)
