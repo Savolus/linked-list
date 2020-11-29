@@ -1,4 +1,4 @@
-<h1 align="center">🔗 Linked List 🔗</h1>
+# Linked List
 
 ## Usage ⌨️
 
@@ -16,7 +16,7 @@ Now use it way You want 🙃
 
 ## Example 🖥
 
-Full code at [`example.js`](https://github.com/Savolus/data-structures/blob/main/example.js):
+Full code at [`example.js`](https://github.com/Savolus/linked-list/blob/main/example.js):
 ```js
 const List = require('./list')
 const list = new List()
