@@ -1,0 +1,22 @@
+{
+  "name": "linked-list",
+  "version": "1.0.0",
+  "description": "Learning and creating linked list data structure for future projects",
+  "main": "example.js",
+  "scripts": {
+    "test": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Savolus/linked-list.git"
+  },
+  "keywords": [
+    "linked-list"
+  ],
+  "author": "Mykola Dorohyi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Savolus/linked-list/issues"
+  },
+  "homepage": "https://github.com/Savolus/linked-list#readme"
+}
