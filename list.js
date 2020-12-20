@@ -44,7 +44,7 @@ class List {
     /**
      * Function to insert value to the end of the linked list.
      * @param {any} value Value to being stored in the linked list.
-     */ 
+     */
     pushBack(value) {
         const node = new Node(value)
 
@@ -69,11 +69,11 @@ class List {
      */
     push(value, position = 0) {
         if (position < 0 || position > this.length)
-            throw 'PositionError: Incorrect position of value'
+            throw new Error('Incorrect position of value')
 
         if (position === 0) return this.pushFront(value)
         if (position === this.length) return this.pushBack(value)
-        
+
         const node = new Node(value)
         let current = this.head
         let prev = null
@@ -89,7 +89,7 @@ class List {
         node.next = current
         this.length++
     }
-    
+
     /**
      * Function to extract value from the start of the linked list.
      * @returns {any} Return value that was extracted from the start of the linked list.
@@ -114,8 +114,8 @@ class List {
             prev = current
             current = current.next
         }
-        
-        prev.next = null
+
+        if (prev) prev.next = null
         this.length--
         return current.value
     }
@@ -127,11 +127,11 @@ class List {
      */
     pop(position = 0) {
         if (position < 0 || position > this.length - 1)
-            throw 'PositionError: Incorrect position of value'
+            throw new Error('Incorrect position of value')
 
         if (position === 0) return this.popFront()
         if (position === this.length - 1) return this.popBack()
-        
+
         let current = this.head
         let prev = null
         let index = 0
@@ -176,7 +176,7 @@ class List {
      */
     get(position = 0) {
         if (position < 0 || position > this.length - 1)
-            throw 'PositionError: Incorrect position of value'
+            throw new Error('Incorrect position of value')
 
         if (position === 0) return this.getFront
         if (position === this.length - 1) return this.getBack
@@ -203,11 +203,11 @@ class List {
             const list = new List()
 
             for (const [key, value] of Object.entries(data))
-                list.pushBack({key, value})
+                list.pushBack({ key, value })
 
             return list
         } else {
-            throw 'ConvertationError: Cannot convert this data type to the linked list'
+            throw new Error('Cannot convert this data type to the linked list')
         }
     }
 
@@ -221,9 +221,8 @@ class List {
             let temp = this.head
 
             for (let j = 0; j < this.length - 1; j++) {
-                if (comparator(temp.value, temp.next.value)) {
+                if (comparator(temp.value, temp.next.value))
                     [temp.value, temp.next.value] = [temp.next.value, temp.value]
-                }
 
                 temp = temp.next
             }
@@ -251,7 +250,7 @@ class List {
      */
     forEach(callback) {
         if (!callback)
-            throw 'CallbackError: Invalid callback was passed'
+            throw new Error('Invalid callback was passed')
 
         let current = this.head
         let index = 0
@@ -271,7 +270,7 @@ class List {
      */
     map(callback) {
         if (!callback)
-            throw 'CallbackError: Invalid callback was passed'
+            throw new Error('Invalid callback was passed')
 
         const newList = new List()
         let current = this.head
@@ -285,19 +284,20 @@ class List {
 
         return newList
     }
-    
+
     /**
      * Function to iterate the linked list of number type with callback function by calling it on every iteration
      * and return value that was accumulated in the first argument after all iterations by calling callback function.
      * @param {Function} callback Callback function that's being called on every iteration. Can take 2 arguments: prev, curr.
+     * @param {any} initialValue If initialValue is specified, is used as the initial value to start the accumulation. From the start it equal to 0.
      * @returns {Number} Return number type value that was accumulated in the prev variable after all iterations.
      */
-    reduce(callback) {
+    reduce(callback, initialValue = 0) {
         if (!callback)
-            throw 'CallbackError: Invalid callback was passed'
+            throw new Error('Invalid callback was passed')
 
         let current = this.head
-        let prev = 0
+        let prev = initialValue
 
         while (current) {
             prev = callback(prev, current.value)
@@ -305,6 +305,144 @@ class List {
         }
 
         return prev
+    }
+
+    /**
+     * Function to iterate the linked list with test callback function by calling it on every iteration.
+     * @param {Function} callback Test callback function that's being called on every iteration. Can take 2 arguments: value, index. And return true or false.
+     * @returns {Node|undefined} Return found node of the linked list or undefinded if it wasn't found.
+     */
+    find(callback) {
+        if (!callback)
+            throw new Error('Invalid callback was passed')
+
+        let current = this.head
+        let index = 0
+
+        while (current) {
+            if (callback(current.value, index))
+                return current
+
+            current = current.next
+            index++
+        }
+    }
+
+    /**
+     * Function to check if this value exist in the linked list.
+     * @param {any} value Value to be checked in the linked list.
+     * @returns {boolean} Return true or false if this value exist in the linked list.
+     */
+    includes(value) {
+        if (!value)
+            throw new Error('Value wasn\'t passed')
+
+        return this.find(curr => curr === value) ? true : false
+    }
+
+    /**
+     * Function to concat two linked list.
+     * @param {List} list The linked list to be concated.
+     * @returns Return new linked list with all values from both of the linked lists.
+     */
+    concat(list) {
+        if (!(list instanceof List))
+            throw new Error('Incorrect data type of passed argument')
+
+        const firstList = this.map(curr => curr)
+        const secondList = list
+
+        secondList.forEach(curr => firstList.pushBack(curr))
+
+        return firstList
+    }
+
+    /**
+     * Function to filter the linked list.
+     * @param {Function} callback Test callback function that's being called on every iteration. Can take 2 arguments: value, index. And return true or false.
+     * @returns {List} Return new filtered linked list.
+     */
+    filter(callback) {
+        if (!callback)
+            throw new Error('Invalid callback was passed')
+
+        const list = this.map(curr => curr)
+        const filtered = new List()
+
+        for (const node of list)
+            if (callback(node))
+                filtered.pushBack(node)
+
+        return filtered
+    }
+
+    /**
+     * Function to check if at least one of the nodes of the linked list passed the test callback function.
+     * @param {Function} callback Test callback function to check value on every ineration of the linked list.
+     * @returns {boolean} Return true if at least one of the nodes of the linked list passed test callback function.
+     */
+    some(callback) {
+        if (!callback)
+            throw new Error('Invalid callback was passed')
+
+        const list = this.map(curr => curr)
+
+        for (const node of list)
+            if (callback(node))
+                return true
+
+        return false
+    }
+
+    /**
+     * Function to check if every node of the linked list passed the test callback function.
+     * @param {Function} callback Test callback function to check value on every ineration of the linked list.
+     * @returns {boolean} Return true if every node of the linked list passed test callback function.
+     */
+    every(callback) {
+        if (!callback)
+            throw new Error('Invalid callback was passed')
+
+        const list = this.map(curr => curr)
+        let passed = 0
+
+        for (const node of list)
+            if (callback(node))
+                passed++
+
+        return passed === list.length
+    }
+
+    /**
+     * Function to reverse the linked list.
+     * @returns Return reversed linked list.
+     */
+    reverse() {
+        const list = this.map(curr => curr)
+        const reversed = new List()
+
+        while (list.length)
+            reversed.pushBack(list.popBack())
+
+        return reversed
+    }
+
+    /**
+     * Function to join the linked list into string by delim with delimiter string argument.
+     * @param {String} delimiter String to delim the linked list into string with this delimiters.
+     * @returns {String} Return joined string of the linked list with delimiters.
+     */
+    join(delimiter) {
+        if (typeof delimiter !== 'string')
+            throw new Error('Incorrect data type of passed argument')
+        
+        const list = this.map(curr => curr)
+        let str = ''
+
+        for (const node of list)
+            str += `${JSON.stringify(node)}${delimiter}`
+
+        return str.substring(0, str.length - delimiter.length)
     }
 
     /**
@@ -332,7 +470,7 @@ class List {
     /**
      * Function-generator to make linked list itaratable with for...of
      */
-    *values(){
+    *values() {
         let current = this.head;
 
         while (current) {
@@ -346,7 +484,7 @@ class List {
      */
     [Symbol.iterator]() {
         return this.values();
-    } 
+    }
 }
 
 module.exports = List
